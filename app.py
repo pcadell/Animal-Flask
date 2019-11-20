@@ -7,7 +7,7 @@ from flask_login import LoginManager
 DEBUG = True
 PORT = 8000
 
-app = flask(__name__)
+app = Flask(__name__)
 
 @app.before_request
 def before_request():
