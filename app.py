@@ -10,7 +10,17 @@ from resources.albums import albums
 from resources.reviews import reviews 
 from resources.users import users
 
+app = Flask(__name__)
 
+login_manager = LoginManager()
+login_manager.init_app(app)
+
+@login_manager.user_loader
+def load_user(userid):
+	try:
+		return models.User.get(models.User.id == userid)
+	except models.DoesNotExist:
+		return None
 
 CORS(albums, origins=['http://localhost:3000'], supports_credentials=True)
 CORS(reviews, origins=['http://localhost:3000'], supports_credentials=True)
@@ -23,7 +33,6 @@ app.register_blueprint(users, url_prefix='/api/v1/users')
 DEBUG = True
 PORT = 8000
 
-app = Flask(__name__)
 
 app.secret_key = "This is a long sentence that holds no value"
 

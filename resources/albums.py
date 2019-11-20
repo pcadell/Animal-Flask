@@ -7,6 +7,8 @@ from playhouse.shortcuts import model_to_dict
 
 albums = Blueprint('albums', 'albums')
 
+
+# list genres
 @albums.route('/', methods=["GET"])
 def genres_index():
 	try:
@@ -17,6 +19,7 @@ def genres_index():
 		return jsonify(data={}, status={"code": 401, "message": "Error getting albums. WTF?"}), 401
 	
 
+# list albums as an index
 @albums.route('/', methods=["GET"])
 def albums_index():
 	try: 
@@ -26,8 +29,8 @@ def albums_index():
 	except models.DoesNotExist:
 		return jsonify(data={}, status={"code": 401, "message": "error getting the resources"}), 401
 
+# create album route
 @albums.route('/', methods=["POST"])
-
 def create_albums():
 	payload = request.get_json()
 	album = models.Album.create(**payload)
