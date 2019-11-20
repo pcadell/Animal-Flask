@@ -45,3 +45,26 @@ def login():
 		print('email not found')
 		return jsonify(data={}, status={'code':401, 'message': 'Email or password is incorrect'}), 401
 
+@users.route('/', methods=["GET"])
+def list_users():
+	users = models.User.select()
+	for u in users:
+		print(u)
+
+	user_dicts = [model_to_dict(u) for u in users]
+	def remove_password(u):
+		u.pop('password')
+		return u 
+
+	user_dicts_without_pw = list(map(remove_password, user_dicts))
+	return jsonify(data=user_dicts_without_pw), 200
+
+@users.route('/logged_in', methods=["GET"])
+def get_logged_in_user():
+	if not current_user.is_authenticated:
+		return jsonify(data={}, status={'code': 401, 'message': "No one is currently shredding"}), 401
+	else: 
+		user_dict = model_to_dict(current_user)
+		user_dict.pop('password')
+		return jsonify(data=user_dict, status={'code': 200, 'message': "Current shredder is {}".format(user_dict['email'])}), 200
+##@users.route('/logout', methods=['GET'])
