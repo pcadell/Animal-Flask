@@ -67,4 +67,9 @@ def get_logged_in_user():
 		user_dict = model_to_dict(current_user)
 		user_dict.pop('password')
 		return jsonify(data=user_dict, status={'code': 200, 'message': "Current shredder is {}".format(user_dict['email'])}), 200
-##@users.route('/logout', methods=['GET'])
+
+@users.route('/logout', methods=['GET'])
+def logout():
+	email = model_to_dict(current_user)['email']
+	logout_user()
+	return jsonify(data={}, status={'code': 200, 'message': "Successfully logged out {}".format(email)})
