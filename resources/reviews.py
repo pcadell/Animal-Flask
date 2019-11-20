@@ -1,0 +1,33 @@
+import models
+
+from flask import Blueprint, jsonify, request 
+from flask_login import current_user, login_required 
+
+from playhouse.shortcuts import model_to_dict
+
+reviews = Blueprint('reviews', 'reviews')
+
+# Allows user to create review for album.
+@reviews.route('/', methods=["POST"])
+def routes_index(album_id):
+	payload = request.get_json()
+	review = models.Review.create(album=album_id, content=payload['content'], user_id=current_user)
+	print(reviews)
+	return jsonify(data=reviews, status={"code": 201, "message":"Successfully reviewed the album!"}), 201
+
+# Update reviews
+@reviews.route('/<id>', methods=['PUT'])
+def update_review():
+	payload = request.get_json()
+	review = models.Review.get_by_id(id)
+	if (review.user.id == current_user.id):
+		review.content = payload['content']
+		review.save()
+
+		review_dict = model_to_dict(review)
+		review_dict['user'].pop('password')
+		return jsonify(data=review_dict, status={'code': 200, 'message': 'Review Successfully updated.'})
+
+# Show Route
+#@reviews.route('/<id>', methods=['GET'])
+#def show_review():

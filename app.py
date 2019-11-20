@@ -12,6 +12,16 @@ from resources.users import users
 
 app = Flask(__name__)
 
+login_manager = LoginManager()
+login_manager.init_app(app)
+
+@login_manager.user_loader
+def load_user(userid):
+	try:
+		return models.User.get(models.User.id == userid)
+	except models.DoesNotExist:
+		return None
+
 CORS(albums, origins=['http://localhost:3000'], supports_credentials=True)
 CORS(reviews, origins=['http://localhost:3000'], supports_credentials=True)
 CORS(users, origins=['http://localhost:3000'], supports_credentials=True)
