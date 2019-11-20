@@ -18,7 +18,9 @@ class Album(Model):
 	artist = CharField()
 	user_id = ForeignKeyField(User, backref='albums')
 	album_cover = CharField()	
+	genre = CharField()
 	created_at = DateTimeField(default=datetime.datetime.now)
+
 
 	class Meta:
 		database = DATABASE

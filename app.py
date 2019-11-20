@@ -10,6 +10,8 @@ from resources.albums import albums
 from resources.reviews import reviews 
 from resources.users import users
 
+
+
 CORS(albums, origins=['http://localhost:3000'], supports_credentials=True)
 CORS(reviews, origins=['http://localhost:3000'], supports_credentials=True)
 CORS(users, origins=['http://localhost:3000'], supports_credentials=True)
