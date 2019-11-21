@@ -1,4 +1,4 @@
-import models 
+import models
 
 from flask import Blueprint, jsonify, request 
 from flask_login import current_user, login_required 
@@ -12,9 +12,9 @@ albums = Blueprint('albums', 'albums')
 @albums.route('/genres/', methods=["GET"])
 def genres_index():
 	try:
-		genres = models.Album.genre.select()
-		print(genres)
-		return jsonify(data=genres, status={"code": 201, "message": "Successfully found genres"}), 201
+		genres = models.Album.select(models.Album.genre).group_by(models.Album.genre)
+		genres_to_dict = [model_to_dict(genre) for genre in genres]
+		return jsonify(data=genres_to_dict, status={"code": 200, "message": "Successfully found genres"}), 200
 	except models.DoesNotExist:
 		return jsonify(data={}, status={"code": 401, "message": "Error getting albums. WTF?"}), 401
 	
