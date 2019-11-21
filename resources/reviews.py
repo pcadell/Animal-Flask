@@ -12,9 +12,9 @@ reviews = Blueprint('reviews', 'reviews')
 @login_required
 def routes_index(album_id):
 	payload = request.get_json()
-	review = models.Review.create(album_id=album_id, content=payload['content'], user_id=current_user.id)
+	review = models.Review.create(album=album_id, content=payload['content'], user=current_user.id)
 	review_dict = model_to_dict(review)
-	review_dict['user_id'].pop('password')
+	review_dict['user'].pop('password')
 	return jsonify(data=review_dict, status={"code": 201, "message":"Successfully reviewed the album!"}), 201
 
 

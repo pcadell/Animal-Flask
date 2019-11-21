@@ -37,7 +37,7 @@ def create_albums():
 	album = models.Album.create(title=payload['title'], artist=payload['artist'], album_cover=payload['album_cover'], genre=payload['genre'], user_id=current_user.id)
 
 	album_dict = model_to_dict(album)
-	album_dict['user_id'].pop('password')
+	album_dict['user'].pop('password')
 
 	return jsonify(data=album_dict, status={'code': 201, 'message':'Successfully created album, {}'.format(album_dict['title'])}), 201
 
@@ -45,13 +45,18 @@ def create_albums():
 @albums.route('/<id>', methods=['GET'])
 def get_one_album(id):
 	album = models.Album.get_by_id(id)
+	reviews=[]
+
+	reviews = album.reviews
+
+	reviews = [model_to_dict(r) for r in reviews]
 
 	if not current_user.is_authenticated:
 		return jsonify(data={'title': album.title, 'artist': album.artist, 'genre': album.genre, 'album_cover': album.album_cover}, status={'code': 200, 'message': "Registered users can access reviews of these albums, wink wink."}), 200
 	else:
 		album_dict = model_to_dict(album)
-		album_dict['user_id'].pop('password')
-		return jsonify(data=album_dict, status={'code': 200, 'message': 'Found album by id {}'.format(album.id)}), 200 
+		album_dict['user'].pop('password')
+		return jsonify(data={'album': album_dict, 'reviews': reviews}, status={'code': 200, 'message': 'Found album by id {}'.format(album.id)}), 200 
 
 # update album route 
 @albums.route('/<id>', methods=["PUT"])
@@ -66,7 +71,7 @@ def update_album(id):
 		album.genere = payload['genere'] if 'genere' in payload else None 
 		album.save()
 		album_dict = model_to_dict(album)
-		album_dict['user_id'].pop('password')
+		album_dict['user'].pop('password')
 		return jsonify(data=album_dict, status={'code': 200, 'message': 'Album updated successfully!'}),200
 	else:
 		return jsonify(data="Forbidden", status={'code': 403, 'message': "Only the user that created this album can update it! Get outta here!"}), 403

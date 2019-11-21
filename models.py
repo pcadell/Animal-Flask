@@ -16,18 +16,17 @@ class User(UserMixin, Model):
 class Album(Model): 
 	title = CharField()
 	artist = CharField()
-	user_id = ForeignKeyField(User, backref='albums')
+	user = ForeignKeyField(User, backref='albums')
 	album_cover = CharField()	
 	genre = CharField()
 	created_at = DateTimeField(default=datetime.datetime.now)
-
 
 	class Meta:
 		database = DATABASE
 
 class Review(Model):
-	album_id = ForeignKeyField(Album, backref='reviews')
-	user_id = ForeignKeyField(User, backref='reviews')
+	album = ForeignKeyField(Album, backref='reviews')
+	user = ForeignKeyField(User, backref='reviews')
 	content = CharField()
 	created_at = DateTimeField(default=datetime.datetime.now)
 
