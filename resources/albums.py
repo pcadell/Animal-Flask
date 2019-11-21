@@ -68,7 +68,7 @@ def update_album(id):
 		album.title = payload['title'] if 'title' in payload else None
 		album.artist = payload['artist'] if 'artist' in payload else None 
 		album.album_cover = payload['album_cover'] if 'album_cover' in payload else None 
-		album.genere = payload['genere'] if 'genere' in payload else None 
+		album.genre = payload['genre'] if 'genre' in payload else None 
 		album.save()
 		album_dict = model_to_dict(album)
 		album_dict['user'].pop('password')
