@@ -41,3 +41,14 @@ def create_albums():
 
 	return jsonify(data=album_dict, status={'code': 201, 'message':'Successfully created album, {}'.format(album_dict['title'])}), 201
 
+# show album route
+@albums.route('/<id>', methods=['GET'])
+def get_one_album(id):
+	album = models.Album.get_by_id(id)
+
+	if not current_user.is_authenticated:
+		return jsonify(data={'title': album.title, 'artist': album.artist, 'genre': album.genre, 'album_cover': album.album_cover}, status={'code': 200, 'message': "Registered users can access reviews of these albums, wink wink."}), 200
+	else:
+		album_dict = model_to_dict(album)
+		album_dict['user_id'].pop('password')
+		return jsonify(data=album_dict, status={'code': 200, 'message': 'Found album by id {}'.format(album.id)}), 200
