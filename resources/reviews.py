@@ -41,5 +41,5 @@ def delete_review(id):
 	if review_to_delete.user.id != current_user.id:
 		return jsonify(data="Forbidden", status={'code': 403, 'message': 'User can only delete their own review, man!'}), 403
 	else: 
-		review_id = review_to_delete.id
+		review_to_delete.delete_instance()
 		return jsonify(data='Review successfully deleted!', status={'code': 200, 'message': 'review successfully deleted'}), 200
