@@ -64,11 +64,11 @@ def get_one_album(id):
 def update_album(id):
 	payload = request.get_json()
 	album = models.Album.get_by_id(id)
-	if(album.user_id == current_user.id):
+	if(album.user.id == current_user.id):
 		album.title = payload['title'] if 'title' in payload else None
 		album.artist = payload['artist'] if 'artist' in payload else None 
 		album.album_cover = payload['album_cover'] if 'album_cover' in payload else None 
-		album.genere = payload['genere'] if 'genere' in payload else None 
+		album.genere = payload['genre'] if 'genere' in payload else None 
 		album.save()
 		album_dict = model_to_dict(album)
 		album_dict['user'].pop('password')
