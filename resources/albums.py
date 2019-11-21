@@ -34,7 +34,7 @@ def albums_index():
 @login_required
 def create_albums():
 	payload = request.get_json()
-	album = models.Album.create(title=payload['title'], artist=payload['artist'], album_cover=payload['album_cover'], genre=payload['genre'], user_id=current_user.id)
+	album = models.Album.create(title=payload['title'], artist=payload['artist'], album_cover=payload['album_cover'], genre=payload['genre'], user=current_user.id)
 
 	album_dict = model_to_dict(album)
 	album_dict['user'].pop('password')
@@ -68,11 +68,7 @@ def update_album(id):
 		album.title = payload['title'] if 'title' in payload else None
 		album.artist = payload['artist'] if 'artist' in payload else None 
 		album.album_cover = payload['album_cover'] if 'album_cover' in payload else None 
-<<<<<<< HEAD
-		album.genere = payload['genre'] if 'genere' in payload else None 
-=======
 		album.genre = payload['genre'] if 'genre' in payload else None 
->>>>>>> bd7a68365d649004214d5740eddcf35bd0dad248
 		album.save()
 		album_dict = model_to_dict(album)
 		album_dict['user'].pop('password')
