@@ -12,9 +12,9 @@ albums = Blueprint('albums', 'albums')
 @albums.route('/genres/', methods=["GET"])
 def genres_index():
 	try:
-		genres = models.Album.genre.select()
+		genres = models.Album.genre.select(models.Album.genre).group_by(models.Album.genre)
 		print(genres)
-		return jsonify(data=genres, status={"code": 201, "message": "Successfully found genres"}), 201
+		return jsonify(data=genres, status={"code": 200, "message": "Successfully found genres"}), 200
 	except models.DoesNotExist:
 		return jsonify(data={}, status={"code": 401, "message": "Error getting albums. WTF?"}), 401
 	
