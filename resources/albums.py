@@ -9,7 +9,7 @@ albums = Blueprint('albums', 'albums')
 
 
 # list genres
-@albums.route('/', methods=["GET"])
+@albums.route('/genres/', methods=["GET"])
 def genres_index():
 	try:
 		genres = models.Album.genre.select()
