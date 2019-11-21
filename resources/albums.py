@@ -51,4 +51,22 @@ def get_one_album(id):
 	else:
 		album_dict = model_to_dict(album)
 		album_dict['user_id'].pop('password')
-		return jsonify(data=album_dict, status={'code': 200, 'message': 'Found album by id {}'.format(album.id)}), 200
+		return jsonify(data=album_dict, status={'code': 200, 'message': 'Found album by id {}'.format(album.id)}), 200 
+
+# update album route 
+@albums.route('/<id>', methods=["PUT"])
+@login_required
+def update_album(id):
+	payload = request.get_json()
+	album = models.Album.get_by_id(id)
+	if(album.user_id == current_user.id):
+		album.title = payload['title'] if 'title' in payload else None
+		album.artist = payload['artist'] if 'artist' in payload else None 
+		album.album_cover = payload['album_cover'] if 'album_cover' in payload else None 
+		album.genere = payload['genere'] if 'genere' in payload else None 
+		album.save()
+		album_dict = model_to_dict(album)
+		album_dict['user_id'].pop('password')
+		return jsonify(data=album_dict, status={'code': 200, 'message': 'Album updated successfully!'}),200
+	else:
+		return jsonify(data="Forbidden", status={'code': 403, 'message': "Only the user that created this album can update it! Get outta here!"}), 403
