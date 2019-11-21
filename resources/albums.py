@@ -70,3 +70,15 @@ def update_album(id):
 		return jsonify(data=album_dict, status={'code': 200, 'message': 'Album updated successfully!'}),200
 	else:
 		return jsonify(data="Forbidden", status={'code': 403, 'message': "Only the user that created this album can update it! Get outta here!"}), 403
+
+# create reviews route
+@reviews.route('/<id>', methods=['POST'])
+@login_required
+def create_review(id):
+	payload = request.get_json()
+	review = models.Review.create(content=payload['content'], album_id=id, user_id=current_user.id)
+	review_dict = model_to_dict(review)
+	review_dict['user_id'].pop('password')
+	return jsonify(data= review_dict, 'status'={'code': 201, 'message': 'Successfully created review'})
+
+
