@@ -31,10 +31,13 @@ def albums_index():
 
 # create album route
 @albums.route('/', methods=["POST"])
+@login_required
 def create_albums():
 	payload = request.get_json()
-	album = models.Album.create(**payload)
-	print(album.__dict__)
-	print(dir(album))
+	album = models.Album.create(title=payload['title'], artist=payload['artist'], album_cover=payload['album_cover'], genre=payload['genre'], user_id=current_user.id)
+
 	album_dict = model_to_dict(album)
-	return jsonify(data=album_dict, status={"code": 201, "message": "Success"}), 201
+	album_dict['user_id'].pop('password')
+
+	return jsonify(data=album_dict, status={'code': 201, 'message':'Successfully created album, {}'.format(album_dict['title'])}), 201
+
