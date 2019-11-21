@@ -59,7 +59,7 @@ def get_one_album(id):
 def update_album(id):
 	payload = request.get_json()
 	album = models.Album.get_by_id(id)
-	if(album.user_id.id == current_user.id):
+	if(album.user_id == current_user.id):
 		album.title = payload['title'] if 'title' in payload else None
 		album.artist = payload['artist'] if 'artist' in payload else None 
 		album.album_cover = payload['album_cover'] if 'album_cover' in payload else None 
@@ -70,5 +70,3 @@ def update_album(id):
 		return jsonify(data=album_dict, status={'code': 200, 'message': 'Album updated successfully!'}),200
 	else:
 		return jsonify(data="Forbidden", status={'code': 403, 'message': "Only the user that created this album can update it! Get outta here!"}), 403
-
-

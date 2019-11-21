@@ -8,26 +8,24 @@ from playhouse.shortcuts import model_to_dict
 reviews = Blueprint('reviews', 'reviews')
 
 # Allows user to create review for album.
-@reviews.route('/', methods=["POST"])
+@reviews.route('/<album_id>', methods=["POST"])
+@login_required
 def routes_index(album_id):
 	payload = request.get_json()
-	review = models.Review.create(album=album_id, content=payload['content'], user_id=current_user)
-	print(reviews)
-	return jsonify(data=reviews, status={"code": 201, "message":"Successfully reviewed the album!"}), 201
+	review = models.Review.create(album_id=album_id, content=payload['content'], user_id=current_user.id)
+	review_dict = model_to_dict(review)
+	review_dict['user_id'].pop('password')
+	return jsonify(data=review_dict, status={"code": 201, "message":"Successfully reviewed the album!"}), 201
 
 # Update reviews
 @reviews.route('/<id>', methods=['PUT'])
-def update_review():
+def update_review(id):
 	payload = request.get_json()
 	review = models.Review.get_by_id(id)
 	if (review.user.id == current_user.id):
 		review.content = payload['content']
 		review.save()
-
 		review_dict = model_to_dict(review)
 		review_dict['user'].pop('password')
 		return jsonify(data=review_dict, status={'code': 200, 'message': 'Review Successfully updated.'})
 
-# Show Route
-#@reviews.route('/<id>', methods=['GET'])
-#def show_review():
