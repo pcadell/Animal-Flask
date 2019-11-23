@@ -17,7 +17,15 @@ def routes_index(album_id):
 	review_dict['user'].pop('password')
 	return jsonify(data=review_dict, status={"code": 201, "message":"Successfully reviewed the album!"}), 201
 
-
+# index route for reviews
+@reviews.route('/', methods=['GET'])
+def reviews_index():
+	try:
+		reviews = [model_to_dict(reviews) for reviews in models.Review.select()]
+		print(reviews)
+		return jsonify(data=reviews, status={"code": 200, "message": "successfully retrieved reviews"}), 200
+	except models.DoesNotExist:
+		return jsonify(data={}, status={"code": 401, "message": "error getting the resources"}), 401
 
 # Update reviews
 @reviews.route('/<id>', methods=['PUT'])
