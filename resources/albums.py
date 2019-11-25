@@ -24,6 +24,8 @@ def genres_index():
 def albums_index():
 	try: 
 		albums = [model_to_dict(albums) for albums in models.Album.select()]
+		for album in albums:
+			album['user'].pop('password')
 		print(albums)
 		return jsonify(data=albums, status={"code": 200, "message": "Success"}), 200
 	except models.DoesNotExist:
