@@ -45,16 +45,6 @@ def login():
 		print('email not found')
 		return jsonify(data={}, status={'code':401, 'message': 'Email or password is incorrect'}), 401
 
-# users show route
-@users.route('/<id>', methods=["GET"])
-def show_user(id):
-	user = models.User.get_by_id(id)
-	print('user in user show route',user)
-	user_dict = model_to_dict(user)
-	user_dict = user_dict.pop('password')
-	print('user_dict in show route', user_dict)
-	return jsonify(data=user_dict, status={'code': 200, 'message': 'This is data for {}'.format(user_dict['email'])}), 200
-
 
 @users.route('/', methods=["GET"])
 def list_users():
@@ -69,6 +59,16 @@ def list_users():
 
 	user_dicts_without_pw = list(map(remove_password, user_dicts))
 	return jsonify(data=user_dicts_without_pw), 200
+
+# users show route
+@users.route('/<id>', methods=["GET"])
+def show_user(id):
+	user = models.User.get_by_id(id)
+	print('user in user show route',user)
+	user_dict = model_to_dict(user)
+	user_dict.pop('password')
+	print('user_dict in show route', user_dict)
+	return jsonify(data=user_dict, status={'code': 200, 'message': 'This is data for {}'.format(user_dict['email'])}), 200
 
 @users.route('/logged_in', methods=["GET"])
 def get_logged_in_user():
