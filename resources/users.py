@@ -24,7 +24,6 @@ def register():
 		login_user(user)
 
 		user_dict = model_to_dict(user)
-		print(user_dict)
 		del user_dict['password']
 		return jsonify(data=user_dict, status={'code': 201, "message": "You monster! You've created a user with the email of {}".format(user_dict['email'])}), 201
 
@@ -49,8 +48,6 @@ def login():
 @users.route('/', methods=["GET"])
 def list_users():
 	users = models.User.select()
-	for u in users:
-		print(u)
 
 	user_dicts = [model_to_dict(u) for u in users]
 	def remove_password(u):
@@ -60,16 +57,35 @@ def list_users():
 	user_dicts_without_pw = list(map(remove_password, user_dicts))
 	return jsonify(data=user_dicts_without_pw), 200
 
-# users show route
+# user show route
 @users.route('/<id>', methods=["GET"])
+@login_required
 def show_user(id):
 	user = models.User.get_by_id(id)
-	print('user in user show route',user)
 	user_dict = model_to_dict(user)
 	user_dict.pop('password')
-	print('user_dict in show route', user_dict)
 	return jsonify(data=user_dict, status={'code': 200, 'message': 'This is data for {}'.format(user_dict['email'])}), 200
 
+# user update route
+@users.route('/<id>', methods=["PUT"])
+@login_required
+def update_user(id):
+	payload = request.get_json()
+	user = models.User.get_by_id(id)
+	print(user)
+
+	if not (current_user.id == user.id):
+		return jsonify(data='Forbidden', status={'code':403, 'message': 'Only a logged in user can edit their own user info'}), 403
+	else:
+		user.email = payload['email'].lower() if 'email' in payload else None
+		user.password = generate_password_hash(payload['password']) if 'password' in payload else None
+		user.save()
+		user_dict = model_to_dict(user)
+		user_dict.pop('password')
+		return jsonify(data=user_dict, status={'code': 200, 'message': 'User updated successfully!'}),200
+
+
+# logged in check
 @users.route('/logged_in', methods=["GET"])
 def get_logged_in_user():
 	if not current_user.is_authenticated:
@@ -79,6 +95,8 @@ def get_logged_in_user():
 		user_dict.pop('password')
 		return jsonify(data=user_dict, status={'code': 200, 'message': "Current shredder is {}".format(user_dict['email'])}), 200
 
+
+# logout path
 @users.route('/logout', methods=['GET'])
 def logout():
 	email = model_to_dict(current_user)['email']
